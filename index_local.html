@@ -4,6 +4,7 @@
     <title>My experiment</title>
     <script src="jspsych-6.3.0/jspsych.js"></script>
     <script src="jspsych-6.3.0/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="jspsych-6.3.0/plugins/jspsych-video-keyboard-response.js"></script>
     <script src="jspsych-6.3.0/plugins/jspsych-image-keyboard-response.js"></script>
     <script src="jspsych-6.3.0/plugins/jspsych-preload.js"></script>
     <link href="jspsych-6.3.0/css/jspsych.css" rel="stylesheet" type="text/css">
@@ -16,8 +17,8 @@
 
     /* preload images */
     var preload = {
-      type: 'preload',
-      images: ['img/blue.png', 'img/orange.png']
+        type: 'preload',
+        auto_preload: true
     }
     timeline.push(preload);
 
@@ -30,32 +31,86 @@
     };
     timeline.push(welcome);
 
+    function loadImg() {
+      var canvas = document.createElement("canvas");
+      canvas.id = "mycanvas";
+      canvas.width = "200";
+      canvas.height = "200";
+      var context = canvas.getContext('2d');
+      var centerX = canvas.width / 2;
+      var centerY = canvas.height / 2;
+
+      var radius = 10;
+
+      var x = [8, 18, 90];
+      var y = [9, 17, 60];
+
+      for(i = 0; i < x.length; i++) {
+        context.beginPath();
+        context.arc(x[i], y[i], radius, 0, 2 * Math.PI, false);
+        context.fillStyle = 'black';
+        context.fill();
+        context.stroke();
+      }
+      return canvas.outerHTML;
+    }
+
+
     /* define instructions trial */
     var instructions = {
       type: "html-keyboard-response",
-      stimulus: `
-        <p>In this experiment, you will participate in a number of trials.
-           In each trial, you will be shown two images (left and right) and be asked to choose the image with more dots.
-           The images will disappear momentarily after they are shown.
-        </p>
-        <p>Then you should <strong>press F</strong> if you saw more dots in the left image,
-           or <strong>press J</strong> if you saw more dots in the right image
-        </p>
-        <div style='width: 700px, text-align:center;'>
-          <div style='float: left; margin-left: 12%; margin-right: 0%;'>
-            <img src='img/blue.png'></img>
-            <p class='small'><strong>Press the F key</strong></p>
-          </div>
-          <div style='float: right; margin-left: 0%; margin-right: 12%;'>
-            <img src='img/orange.png'></img>
-            <p class='small'><strong>Press the J key</strong></p>
-          </div>
-        </div>
-        <p>Press any key to begin.</p>
-      `
+      stimulus:     `
+            <p>In this experiment, you will participate in a number of trials.
+               In each trial, you will be shown two images (left and right) and be asked to choose the image with more dots.
+               The images will disappear momentarily after they are shown.
+            </p>
+            <p>Then you should <strong>press F</strong> if you saw more dots in the left image,
+               or <strong>press J</strong> if you saw more dots in the right image
+            </p>
+            <div style='width: 700px, text-align:center;'>
+              <div style='float: left; margin-left: 12%; margin-right: 0%;'>
+                <img src='img/blue.png.png'></img>
+                <p class='small'><strong>Press the F key</strong></p>
+              </div>
+              <div style='float: right; margin-left: 0%; margin-right: 12%;'>
+                <img src='img/orange.png'></img>
+                <p class='small'><strong>Press the J key</strong></p>
+              </div>
+            </div>
+            <p>Press any key to begin.</p>
+          `
       // post_trial_gap: 2000
     };
     timeline.push(instructions);
+
+
+    // var video = {
+    //   type: 'video-keyboard-response',
+    //   stimulus: 'video/sample_video.mp4',
+    //   choices: jsPsych.NO_KEYS,
+    // }
+    var video = {
+      type: 'html-keyboard-response',
+      stimulus: `
+        <video controls width="850" autoplay="true">
+          <source src="video/sample_video.mp4"
+            type="video/mp4">
+        </video>
+      `
+    }
+
+    timeline.push(video);
+
+    var getReady = {
+      type: 'html-keyboard-response',
+      stimulus: `
+        <div style='width: 700px, text-align:center;'>
+        <p> Press any key to begin when you're ready! <p>
+        </div>
+      `
+    }
+
+    timeline.push(getReady);
 
 
     var curr_difficulty = 'easy';
